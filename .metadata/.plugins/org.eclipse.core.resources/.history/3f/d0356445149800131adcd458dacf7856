@@ -24,7 +24,7 @@ public class MySmoothCamera extends SmoothCamera {
 			@Override
 			public void onUpdate(float pSecondsElapsed) {
 				if (_isMoving)
-					if (equal(getCenterX(), _dstX, COOR_EQ_ERR) && equal(getCenterY(), _dstY, COOR_EQ_ERR))
+					if (getCenterX() == _dstX && getCenterY() == _dstY)
 						_isMoving = false;
 				Log.d("Wei", "isMoving = " + _isMoving + " dX=" + _dstX + " dY=" + _dstY + " x=" + getCenterX() + " y=" + getCenterY());
 			}
@@ -35,7 +35,7 @@ public class MySmoothCamera extends SmoothCamera {
 	
 	@Override
 	public void setCenter(float x, float y) {
-		if (!equal(x, _dstX, COOR_EQ_ERR) || !equal(y, _dstY, COOR_EQ_ERR))
+		if (equal(x, _dstX, COOR_EQ_ERR) || y != _dstY)
 			_isMoving = true;
 		_dstX = x;
 		_dstY = y;

@@ -283,6 +283,7 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 		int i = _bricks.indexOf(brick);
 		deleteBrick(brick);
 		moveDownBricks(i);
+		
 		if (!hasNoiseBrick()) {
 			_barTimer.pause();
 			setBricksIsTouchable(_bottomBrickIndex, _bricks.size(), false);
@@ -292,6 +293,8 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 	@Override
 	public void onBrickTouchedUp(final Brick brick) {
 		_unHandled++;
+		
+		// 非常有問題↓↓↓
 	}
 
 	///////////////////////////////////////////////////////////////////////////

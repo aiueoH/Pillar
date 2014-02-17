@@ -270,11 +270,17 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 				while (isPillarBrick(_bottomBrickIndex, PB_LINKED_NUMS_THR)) {
 					final int old = _bottomBrickIndex;	
 					_bottomBrickIndex += PB_LINKED_NUMS_THR;
-					_bottomBrickIndex = _bottomBrickIndex < _bricks.size() ? _bottomBrickIndex : _bricks.size() - 1;
-					setBricksIsTouchable(old, _bottomBrickIndex - old, false);
+					_bottomBrickIndex = _bottomBrickIndex < _bricks.size() ? _bottomBrickIndex : _bricks.size() -
 				}
-				chaseBrickAtBottom(_bricks.get(_bottomBrickIndex));
 			}
+			
+			while (isPillarBrick(_bottomBrickIndex, PB_LINKED_NUMS_THR)) {
+				final int old = _bottomBrickIndex;	
+				_bottomBrickIndex += PB_LINKED_NUMS_THR;
+				_bottomBrickIndex = _bottomBrickIndex < _bricks.size() ? _bottomBrickIndex : _bricks.size() - 1;
+				setBricksIsTouchable(old, _bottomBrickIndex - old, false);
+			}
+			chaseBrickAtBottom(_bricks.get(_bottomBrickIndex));
 		}
 	}
 	
@@ -283,15 +289,17 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 		int i = _bricks.indexOf(brick);
 		deleteBrick(brick);
 		moveDownBricks(i);
-		if (!hasNoiseBrick()) {
-			_barTimer.pause();
-			setBricksIsTouchable(_bottomBrickIndex, _bricks.size(), false);
-		}
 	}
 
 	@Override
 	public void onBrickTouchedUp(final Brick brick) {
 		_unHandled++;
+		
+		// 非常有問題↓↓↓
+		if (!hasNoiseBrick()) {
+			_barTimer.pause();
+			setBricksIsTouchable(_bottomBrickIndex, _bricks.size(), false);
+		}
 	}
 
 	///////////////////////////////////////////////////////////////////////////

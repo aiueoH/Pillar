@@ -43,7 +43,6 @@ import org.andengine.util.modifier.IModifier;
 
 import android.R.bool;
 import android.R.integer;
-import android.R.string;
 import android.graphics.Typeface;
 import android.util.Log;
 
@@ -103,14 +102,7 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 			_scene.setBackground(new EntityBackground(gradient));
 		}
 		initBrick();
-		String s = "";
-		for (Brick b : _bricks) {
-			if (b instanceof PillarBrick)
-				s += "p";
-			else
-				s += "N";
-		}
-		Log.d("Wei", s);
+
 		{
 //			int b = findBottomBrickIndex();
 //			setBricksIsTouchable(_bottomBrickIndex, b - _bottomBrickIndex, false);
@@ -252,7 +244,7 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 
 	@Override
 	public boolean isBrickTouchable(Brick brick) {
-		return brick.getIsTouchable() & !_camera.getIsMoving();
+		return brick.getIsTouchable() || _camera.getIsMoving();
 	}
 	
 	@Override
@@ -266,32 +258,37 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 			float x = _completeText.getWidth() / 2, y = _camera.getHeight() - _completeText.getHeight() / 2;
 			_completeText.setPosition(x, y);
 			
-			if (_unHandled == 0) {
-				while (isPillarBrick(_bottomBrickIndex, PB_LINKED_NUMS_THR)) {
-					final int old = _bottomBrickIndex;	
-					_bottomBrickIndex += PB_LINKED_NUMS_THR;
-					_bottomBrickIndex = _bottomBrickIndex < _bricks.size() ? _bottomBrickIndex : _bricks.size() - 1;
-					setBricksIsTouchable(old, _bottomBrickIndex - old, false);
-				}
-				chaseBrickAtBottom(_bricks.get(_bottomBrickIndex));
+			while (isPillarBrick(_bottomBrickIndex, PB_LINKED_NUMS_THR)) {
+				final int old = _bottomBrickIndex;	
+				_bottomBrickIndex += PB_LINKED_NUMS_THR;
+				_bottomBrickIndex = _bottomBrickIndex < _bricks.size() ? _bottomBrickIndex : _bricks.size() - 1;
+				setBricksIsTouchable(old, _bottomBrickIndex - old, false);
 			}
+			chaseBrickAtBottom(_bricks.get(_bottomBrickIndex));
 		}
 	}
 	
 	@Override
 	public void onBrickMovedOut(final Brick brick) {
+		_unHandled++;
 		int i = _bricks.indexOf(brick);
 		deleteBrick(brick);
 		moveDownBricks(i);
-		if (!hasNoiseBrick()) {
-			_barTimer.pause();
-			setBricksIsTouchable(_bottomBrickIndex, _bricks.size(), false);
-		}
 	}
 
 	@Override
 	public void onBrickTouchedUp(final Brick brick) {
-		_unHandled++;
+		int i = _bricks.indexOf(brick);
+		if (i < _bottomBrickIndex) {
+			Log.d("Wei", "i < bottomIndex");
+			_bottomBrickIndex--;
+			chaseBrickAtBottom(_bricks.get(_bottomBrickIndex));
+		}
+		
+		if (!hasNoiseBrick()) {
+			_barTimer.pause();
+			setBricksIsTouchable(_bottomBrickIndex, _bricks.size(), false);
+		}
 	}
 
 	///////////////////////////////////////////////////////////////////////////
