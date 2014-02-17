@@ -1,0 +1,15 @@
+package com.pillar;
+
+import org.andengine.engine.handler.timer.TimerHandler;
+import org.andengine.entity.primitive.Line;
+
+public class BarTimer {
+
+	TimerHandler timerHandler;
+	
+	
+	public BarTimer() {
+		
+	}
+
+}

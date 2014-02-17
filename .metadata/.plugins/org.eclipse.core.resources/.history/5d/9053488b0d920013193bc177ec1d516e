@@ -1,0 +1,27 @@
+package com.pillar;
+
+import org.andengine.engine.handler.timer.TimerHandler;
+import org.andengine.entity.primitive.Line;
+import org.andengine.entity.primitive.Rectangle;
+import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import org.andengine.util.color.Color;
+
+public class BarTimer {
+
+	private TimerHandler timerHandler;
+	
+	private Line[] frameLines = new Line[4];
+	private Rectangle bar;
+	
+	private float pX, pY, width, height;
+	
+	public BarTimer(float x, float y, float width, float height, Color color, VertexBufferObjectManager vertexBufferObjectManager) {
+		this.pX = x;
+		this.pY = y;
+		this.width = width;
+		this.height = height;
+		bar = new Rectangle(x, y, width, height, vertexBufferObjectManager);
+		bar.setColor(color);
+	}
+
+}

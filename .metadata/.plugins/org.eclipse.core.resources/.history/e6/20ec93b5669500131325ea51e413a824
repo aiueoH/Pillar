@@ -1,0 +1,249 @@
+package com.pillar;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+
+import org.andengine.engine.Engine;
+import org.andengine.engine.camera.SmoothCamera;
+import org.andengine.engine.camera.hud.HUD;
+import org.andengine.engine.handler.IUpdateHandler;
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
+import org.andengine.entity.Entity;
+import org.andengine.entity.primitive.Line;
+import org.andengine.entity.primitive.Rectangle;
+import org.andengine.entity.scene.Scene;
+import org.andengine.entity.scene.background.Background;
+import org.andengine.entity.sprite.AnimatedSprite;
+import org.andengine.entity.text.Text;
+import org.andengine.opengl.font.Font;
+import org.andengine.opengl.font.FontFactory;
+import org.andengine.opengl.font.FontManager;
+import org.andengine.opengl.texture.TextureManager;
+import org.andengine.opengl.texture.region.TextureRegion;
+import org.andengine.opengl.texture.region.TiledTextureRegion;
+import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import org.andengine.util.color.Color;
+import org.andengine.util.math.MathUtils;
+
+import android.R.integer;
+import android.graphics.Typeface;
+import android.util.Log;
+
+public class GameController implements IBrickOwner, IBarTimerOwner {
+
+	public static final float CAM_WIDTH = 480, CAM_HEIGHT = 800;
+	public static final float SCENE_WIDTH = 480, SCENE_HEIGHT = 3000;
+	
+	private final float CAM_VEL_X = 1f, CAM_VEL_Y = 3000f, CAM_VEL_Z = 1f;
+	private final float BT_X = 10f, BT_Y = 30f;
+	private final float BT_W = 25f, BT_H = 700f;
+	private final float BT_BORDER_W = 5f;
+	private final Color BT_BAR_C = new Color(1f, 0.8f, 0.3f);
+	private final Color BT_BORDER_C = Color.WHITE;
+	private final float TIMER_DURATION = 60f;
+	private final float TIMER_INTERVAL = 0.1f;
+	
+	private final int PB_NUMS = 100; 
+	private final int PB_LINKED_NUMS_THR = 5;
+	
+	private Engine engine;
+	private VertexBufferObjectManager vertexBufferObjectManager;
+	private FontManager fontManager;
+	private TextureManager textureManager;
+	private Scene scene;
+	private SmoothCamera camera;
+	private HUD hud;
+	
+	public static TiledTextureRegion BACKBROUND;
+	
+	private ArrayList<Brick> bricks;
+	private int bottomBrickIndex;
+	// HUD
+	private Text completeText;
+	
+	private BarTimer barTimer;
+	
+	public GameController() {
+		this.bricks = new ArrayList<Brick>();
+		this.camera = new SmoothCamera(0, 0, CAM_WIDTH, CAM_HEIGHT, CAM_VEL_X, CAM_VEL_Y, CAM_VEL_Z);
+	}
+	
+	public void initScene() {
+		this.scene = new Scene();
+		this.scene.setBackground(new Background(0.5f, 0.3f, 0.8f));
+		
+		
+		initBrick();
+		float pCenterX = SCENE_WIDTH - CAM_WIDTH / 2;
+		float pCenterY = SCENE_HEIGHT - CAM_HEIGHT / 2;
+		this.camera.setCenterDirect(pCenterX, pCenterY);
+		tryChaseBrickAtBottom();
+		
+		this.hud = new HUD();
+		// text
+		{
+			Font font = FontFactory.create(this.fontManager, this.textureManager, 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+			font.load();
+			completeText = new Text(0, 0, font, "01234567890123456789", this.vertexBufferObjectManager);
+			this.completeText.setText(new DecimalFormat("#.##").format(calcCompleteRate()) + "%");
+			hud.attachChild(completeText);
+		}
+		// bartimer
+		{
+			this.barTimer = new BarTimer(BT_X, BT_Y, BT_W, BT_H, BT_BORDER_W, BT_BAR_C, BT_BORDER_C, TIMER_DURATION, TIMER_INTERVAL, vertexBufferObjectManager, this);
+			this.hud.attachChild(barTimer);
+			this.scene.registerUpdateHandler(this.barTimer.getTimerHandler());
+		}
+		this.camera.setHUD(hud);
+	}
+	
+	public void initBrick() {
+		for (int i = 0, pCount = 0; pCount < PB_NUMS; i++) {
+			float pX = CAM_WIDTH / 2 - Brick.DEFAULT_WIDTH / 2;
+			float pY = SCENE_HEIGHT - (i + 1) * Brick.DEFAULT_HEIGHT;
+			Brick brick;
+			if (MathUtils.random(0, 3) != 0) {
+				brick = new PillarBrick(pX, pY, this.vertexBufferObjectManager, this);
+				pCount++;
+			} else
+				brick = new NoiseBrick(pX, pY, this.vertexBufferObjectManager, this);
+			addBrick(brick);
+		}
+		this.bottomBrickIndex = 0;
+	}
+	
+	private void addBrick(Brick brick) {
+		this.scene.attachChild(brick);
+		this.scene.registerTouchArea(brick);
+		this.bricks.add(brick);
+	}
+	
+	public SmoothCamera getSmoothCamera() {
+		return this.camera;
+	}
+	
+	public Scene getScene() {
+		return this.scene;
+	}
+	
+	public void setEngine(Engine engine) {
+		this.engine = engine;
+	}
+	
+	public void setVertexBufferObjectManager(VertexBufferObjectManager vertexBufferObjectManager) {
+		this.vertexBufferObjectManager = vertexBufferObjectManager;
+	}
+	
+	public void setTextureManager(TextureManager textureManager) {
+		this.textureManager = textureManager;
+	}
+	
+	public void setFontManager(FontManager fontManager) {
+		this.fontManager = fontManager;
+	}
+	
+	private void moveDownBricks(final int start) {
+		for (int i = start; i < bricks.size(); i++)
+			bricks.get(i).moveDown();
+	}
+	
+	private void freezeBricks() {
+//		int n = (int)Math.ceil(CAM_HEIGHT / Brick.DEFAULT_HEIGHT);
+//		for (int i = this.bottomBrickIndex, count = 0; i < this.bricks.size() && count < n; i++, count++)
+//			this.bricks.get(i).setIsTouchable(false);
+		for (int i = this.bottomBrickIndex; i < this.bricks.size(); i++)
+			this.bricks.get(i).setIsTouchable(false);
+	}
+	
+	private boolean isPillarBrickLinked(int n) {
+		for (int i = 0; i < n; i++) {
+			int index = this.bottomBrickIndex + i;
+			if (index >= this.bricks.size() || !(this.bricks.get(index) instanceof PillarBrick))
+				return false;
+		}
+		return true;
+	}
+	
+	private void tryChaseBrickAtBottom() {
+		while (isPillarBrickLinked(PB_LINKED_NUMS_THR)) {
+			final int targetIndex = this.bottomBrickIndex + PB_LINKED_NUMS_THR;
+			if (targetIndex < this.bricks.size()) {
+				Brick targetBrick = this.bricks.get(targetIndex);
+				chaseBrickAtBottom(targetBrick);
+			} else 
+				break;
+		}
+	}
+	
+	private void chaseBrickAtBottom(Brick brick) {
+		float cY = brick.getDestinationY() + brick.getHeight() - this.camera.getHeight() / 2;
+		this.camera.setCenter(this.camera.getCenterX(), cY);
+		this.bottomBrickIndex = this.bricks.indexOf(brick);
+	}
+
+	private boolean hasNoiseBrick() {
+		for (Brick b : this.bricks)
+			if (b instanceof NoiseBrick && !b.getIsMovingOut())
+				return true;
+		return false;
+	}
+	
+	private float calcCompleteRate() {
+		return (float)countLinkedBrick() / PB_NUMS * 100f;
+	}
+	
+	private int countLinkedBrick() {
+		int c = 0;
+		for (Brick b : this.bricks)
+			if (b instanceof PillarBrick)
+				c++;
+			else
+				break;
+		return c;
+	}
+	
+	private void deleteBrick(final Brick brick) {
+		this.engine.runOnUpdateThread(new Runnable() {
+			@Override
+			public void run() {
+				scene.unregisterTouchArea(brick);
+				scene.detachChild(brick);
+				brick.detachSelf();
+				brick.dispose();
+			}
+		});
+		this.bricks.remove(brick);
+	}
+
+	@Override
+	public void onTimesUp(TimerHandler timerHandler) {
+		freezeBricks();
+		this.completeText.setText("FAIL");
+	}
+
+	@Override
+	public void onBrickMovedDown(Brick brick) {
+		if (hasNoiseBrick())
+			this.completeText.setText(new DecimalFormat("#.##").format(calcCompleteRate()) + "%");
+		else
+			this.completeText.setText("Complete " + new DecimalFormat("#.##").format(calcCompleteRate()) + "% !!");
+		tryChaseBrickAtBottom();
+	}
+	
+	@Override
+	public void onBrickMovedOut(final Brick brick) {
+		int i = this.bricks.indexOf(brick);
+		deleteBrick(brick);
+		moveDownBricks(i);
+	}
+
+	@Override
+	public void onBrickTouchedUp(Brick brick) {
+		if (!hasNoiseBrick()) {
+			this.barTimer.pause();
+			freezeBricks();
+		}
+	}
+
+}

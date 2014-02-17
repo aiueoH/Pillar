@@ -1,0 +1,3 @@
+INDEX VERSION 1.126+D:\Dropbox\Projects\Pillar\.metadata\.plugins\org.eclipse.jdt.core
+189486204.index
+4054669516.index

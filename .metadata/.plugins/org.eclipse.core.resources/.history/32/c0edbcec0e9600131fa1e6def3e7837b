@@ -1,0 +1,94 @@
+package com.pillar;
+
+import java.util.ArrayList;
+
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
+import org.andengine.entity.Entity;
+import org.andengine.entity.primitive.Line;
+import org.andengine.entity.primitive.Rectangle;
+import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import org.andengine.util.adt.color.Color;
+
+import android.R.integer;
+import android.util.Log;
+
+public class BarTimer extends Rectangle {
+
+	
+	private float x, y, width, height;
+	private float duration, time;
+	private float interval;
+	
+	private boolean isPause;
+	
+	private Line[] borderLines = new Line[4];
+	private Rectangle bar;
+	private TimerHandler timerHandler;
+	private IBarTimerOwner barTimerOwner;
+	
+	public BarTimer(float x, float y, float width, float height, 
+			float boderWidth, 
+			Color barColor, Color borderColor, 
+			float duration,
+			float interval,
+			VertexBufferObjectManager vertexBufferObjectManager, 
+			IBarTimerOwner barTimerOwner) {
+		super(x, y, width, height, vertexBufferObjectManager);
+		this.isPause = false;
+		this.setColor(Color.TRANSPARENT);
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.time = this.duration = duration;
+		this.interval = interval;
+		this.barTimerOwner = barTimerOwner;
+		this.bar = new Rectangle(x, y, width, height, vertexBufferObjectManager);
+		this.bar.setColor(barColor);
+		this.attachChild(this.bar);
+		{
+		float cX[] = {x - width / 2, x + width / 2};
+		float cY[] = {y + height / 2, y - height / 2};
+		this.borderLines[0] = new Line(cX[0], cY[0], cX[1], cY[0], boderWidth, vertexBufferObjectManager);
+		this.borderLines[1] = new Line(cX[1], cY[0], cX[1], cY[1], boderWidth, vertexBufferObjectManager);
+		this.borderLines[2] = new Line(cX[1], cY[1], cX[0], cY[1], boderWidth, vertexBufferObjectManager);
+		this.borderLines[3] = new Line(cX[0], cY[1], cX[0], cY[0], boderWidth, vertexBufferObjectManager);
+		}
+		for (Line line : this.borderLines) {
+			line.setColor(borderColor);
+			this.attachChild(line);
+		}
+		final BarTimer thisBarTimer = this;
+		this.timerHandler = new TimerHandler(interval, true, new ITimerCallback() {
+			@Override
+			public void onTimePassed(TimerHandler timerHandler) {
+				if (!isPause) {
+					if (thisBarTimer.time > 0) {
+						thisBarTimer.time -= thisBarTimer.interval;
+						float p = thisBarTimer.time / thisBarTimer.duration;
+						thisBarTimer.bar.setHeight(thisBarTimer.height * p);
+						thisBarTimer.bar.setY(thisBarTimer.y + thisBarTimer.height * (1f - p));
+					} else {
+						timerHandler.setAutoReset(false);
+						thisBarTimer.barTimerOwner.onTimesUp(timerHandler);
+					}
+				}
+			}
+		});
+	}
+	
+	public void pause() {
+		this.isPause = true;
+	}
+	
+	public void setPercent(float n) {
+		this.bar.setY(this.x + (1f - n) * this.height);
+		this.bar.setHeight(n * this.height);
+	}
+
+	public TimerHandler getTimerHandler() {
+		return this.timerHandler;
+	}
+	
+}

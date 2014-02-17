@@ -1,0 +1,16 @@
+package com.pillar;
+
+import org.andengine.opengl.texture.region.TiledTextureRegion;
+import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import org.andengine.util.math.MathUtils;
+
+public class NoiseBrick extends Brick {
+
+	public static TiledTextureRegion TILEDTEXTURE;
+	
+	public NoiseBrick(float pX, float pY,
+			VertexBufferObjectManager pVertexBufferObjectManager,
+			IBrickOwner brickOwner) {
+		super(pX, pY, TILEDTEXTURE, pVertexBufferObjectManager, brickOwner);
+	}
+}

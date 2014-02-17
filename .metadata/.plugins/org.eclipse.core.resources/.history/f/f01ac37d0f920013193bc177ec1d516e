@@ -1,0 +1,9 @@
+package com.pillar;
+
+import java.util.ArrayList;
+
+import android.content.Entity;
+
+public interface IEnitySet {
+	public ArrayList<E>[] getEntitys();
+}

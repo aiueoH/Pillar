@@ -1,0 +1,7 @@
+package com.pillar;
+
+public interface IBrickOwner {
+	public void onBrickMovingOut(Brick brick);
+	public void onBrickMovedOut(Brick brick);
+	public void onBrickMoveDownFinished(Brick brick);
+}

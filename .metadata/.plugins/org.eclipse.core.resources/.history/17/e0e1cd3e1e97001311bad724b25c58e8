@@ -1,0 +1,23 @@
+package com.pillar;
+
+public class BrickManager implements IBrickOwner{
+
+	@Override
+	public void onBrickTouchedUp(Brick brick) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onBrickMovedOut(Brick brick) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onBrickMovedDown(Brick brick) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

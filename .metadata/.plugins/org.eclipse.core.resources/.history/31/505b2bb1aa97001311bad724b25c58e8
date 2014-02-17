@@ -1,0 +1,7 @@
+package com.pillar;
+
+public interface IBrickOwner extends IBarTimerOwner {
+	public void onBrickTouchedUp(final Brick brick);
+	public void onBrickMovedOut(final Brick brick);
+	public void onBrickMovedDown(final Brick brick);
+}

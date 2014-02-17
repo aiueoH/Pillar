@@ -1,0 +1,23 @@
+package com.pillar;
+
+import org.andengine.engine.handler.timer.TimerHandler;
+import org.andengine.entity.primitive.Line;
+import org.andengine.entity.primitive.Rectangle;
+
+public class BarTimer {
+
+	private TimerHandler timerHandler;
+	
+	private Line[] frameLines = new Line[4];
+	private Rectangle bar;
+	
+	private float pX, pY, pWidth, pHeight;
+	
+	public BarTimer(float pX, float pY, float pWidth, float pHeight) {
+		this.pX = pX;
+		this.pY = pY;
+		this.pWidth = pWidth;
+		this.pHeight = pHeight;
+	}
+
+}
