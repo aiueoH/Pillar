@@ -46,7 +46,7 @@ public class BarTimer extends Rectangle {
 		_barTimerOwner = barTimerOwner;
 		_bar = new Rectangle(x, y, width, height, vertexBufferObjectManager);
 		_bar.setColor(barColor);
-		this.attachChild(_bar);
+		attachChild(_bar);
 		{
 			float cX[] = {x - width / 2, x + width / 2};
 			float cY[] = {y + height / 2, y - height / 2};
@@ -57,7 +57,7 @@ public class BarTimer extends Rectangle {
 		}
 		for (Line line : _borderLines) {
 			line.setColor(borderColor);
-			this.attachChild(line);
+			attachChild(line);
 		}
 		final BarTimer thisBarTimer = this;
 		_timerHandler = new TimerHandler(interval, true, new ITimerCallback() {

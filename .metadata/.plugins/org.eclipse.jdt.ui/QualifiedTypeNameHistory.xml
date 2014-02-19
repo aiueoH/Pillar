@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="android.content.Entity"/>
-<fullyQualifiedTypeName name="com.test.MainActivity"/>
-<fullyQualifiedTypeName name="org.andengine.extension.physics.box2d.PhysicsFactory"/>
-<fullyQualifiedTypeName name="org.andengine.extension.physics.box2d.PhysicsConnector"/>
-<fullyQualifiedTypeName name="com.badlogic.gdx.physics.box2d.BodyDef.BodyType"/>
 <fullyQualifiedTypeName name="org.andengine.extension.physics.box2d.util.Vector2Pool"/>
 <fullyQualifiedTypeName name="com.badlogic.gdx.math.Vector2"/>
 <fullyQualifiedTypeName name="org.andengine.entity.sprite.AnimatedSprite"/>
@@ -24,8 +19,6 @@
 <fullyQualifiedTypeName name="org.andengine.engine.Engine"/>
 <fullyQualifiedTypeName name="java.lang.Runnable"/>
 <fullyQualifiedTypeName name="org.andengine.opengl.texture.region.TextureRegion"/>
-<fullyQualifiedTypeName name="org.andengine.opengl.texture.bitmap.BitmapTexture"/>
-<fullyQualifiedTypeName name="org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory"/>
 <fullyQualifiedTypeName name="org.andengine.entity.scene.background.IBackground"/>
 <fullyQualifiedTypeName name="org.andengine.entity.scene.background.SpriteBackground"/>
 <fullyQualifiedTypeName name="org.andengine.entity.sprite.Sprite"/>
@@ -42,7 +35,6 @@
 <fullyQualifiedTypeName name="com.pillar.NoiseBrick"/>
 <fullyQualifiedTypeName name="com.pillar.IBrickOwner"/>
 <fullyQualifiedTypeName name="com.pillar.BrickManager"/>
-<fullyQualifiedTypeName name="com.pillar.GameController"/>
 <fullyQualifiedTypeName name="java.lang.Override"/>
 <fullyQualifiedTypeName name="org.andengine.engine.handler.IUpdateHandler"/>
 <fullyQualifiedTypeName name="com.pillar.IBarTimerOwner"/>
@@ -60,4 +52,12 @@
 <fullyQualifiedTypeName name="com.pillar.MySmoothCamera"/>
 <fullyQualifiedTypeName name="org.andengine.util.math.MathUtils"/>
 <fullyQualifiedTypeName name="java.lang.Math"/>
+<fullyQualifiedTypeName name="org.andengine.opengl.texture.bitmap.BitmapTexture"/>
+<fullyQualifiedTypeName name="org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas"/>
+<fullyQualifiedTypeName name="org.andengine.opengl.texture.TextureOptions"/>
+<fullyQualifiedTypeName name="org.andengine.opengl.texture.region.ITiledTextureRegion"/>
+<fullyQualifiedTypeName name="org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory"/>
+<fullyQualifiedTypeName name="com.pillar.GameController"/>
+<fullyQualifiedTypeName name="com.pillar.GameActivity"/>
+<fullyQualifiedTypeName name="org.andengine.entity.sprite.TiledSprite"/>
 </qualifiedTypeNameHistroy>

@@ -62,7 +62,7 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 	private final float TIMER_DURATION = 60f;
 	private final float TIMER_INTERVAL = 0.1f;
 	// PillarBrick
-	private final int PB_NUMS = 100; 
+	private final int PB_NUMS = 17; 
 	private final int PB_LINKED_NUMS_THR = 5;
 
 	public static ITextureRegion BACKBROUND;
@@ -186,8 +186,8 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 			float pY = SCENE_HEIGHT - (i + 1) * Brick.DEFAULT_HEIGHT + Brick.DEFAULT_HEIGHT / 2;
 			pY = (i + 0.5f) * Brick.DEFAULT_HEIGHT;
 			Brick brick;
-			if (MathUtils.random(0, 3) != 0) {
-				brick = new PillarBrick(pX, pY, _vertexBufferObjectManager, this);
+			if (MathUtils.random(0, 2) == 0) {
+				brick = new PillarBrick(pX, pY, _vertexBufferObjectManager, this, PB_NUMS - pCount - 1);
 				pCount++;
 			} else
 				brick = new NoiseBrick(pX, pY, _vertexBufferObjectManager, this);

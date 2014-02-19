@@ -1,8 +1,0 @@
-package com.pillar;
-
-import org.andengine.engine.handler.timer.TimerHandler;
-
-public interface IBarTimerOwner {
-	void unregisterTimeHandler(TimerHandler timeHandler);
-	void onTimesUp(TimerHandler timerHandler);
-}

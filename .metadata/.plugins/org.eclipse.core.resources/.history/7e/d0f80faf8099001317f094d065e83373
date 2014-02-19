@@ -1,0 +1,19 @@
+package com.pillar;
+
+import org.andengine.opengl.texture.region.TiledTextureRegion;
+import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import org.andengine.util.math.MathUtils;
+
+public class PillarBrick extends Brick {
+
+	public static TiledTextureRegion TILEDTEXTURE;
+	
+	public PillarBrick(final float x, final float y,
+			final VertexBufferObjectManager vertexBufferObjectManager,
+			final IBrickOwner brickOwner, final int part) {
+		super(x, y, TILEDTEXTURE, vertexBufferObjectManager, brickOwner);
+		setCurrentTileIndex(part);
+//		super(x, y, TILEDTEXTURE, vertexBufferObjectManager, brickOwner);
+	}
+
+}

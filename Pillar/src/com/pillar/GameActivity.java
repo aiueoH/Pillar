@@ -3,11 +3,13 @@ import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.Scene;
+import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.entity.util.FPSLogger;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.bitmap.BitmapTexture;
+import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
@@ -41,19 +43,30 @@ public class GameActivity extends SimpleBaseGameActivity {
 		return engineOptions;
 	}
 
+	public static TiledTextureRegion FISH_REGION, F1, F2;
 	@Override
 	protected void onCreateResources() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-		BitmapTextureAtlas btaNB = new BitmapTextureAtlas(getTextureManager(), 200, 100, TextureOptions.BILINEAR);
-		NoiseBrick.TILEDTEXTURE = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(btaNB, this, "noiseB.png", 0, 0, 1, 1);
+		
+		BitmapTextureAtlas btaNB = new BitmapTextureAtlas(getTextureManager(), 300, 100, TextureOptions.BILINEAR);
+		NoiseBrick.TILEDTEXTURE = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(btaNB, this, "nb.png", 0, 0, 1, 1);
 		btaNB.load();
-		BitmapTextureAtlas btaPB = new BitmapTextureAtlas(getTextureManager(), 200, 100, TextureOptions.BILINEAR);
-		PillarBrick.TILEDTEXTURE = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(btaPB, this, "pillarB.png", 0, 0, 1, 1);
+		
+		BitmapTextureAtlas btaPB = new BitmapTextureAtlas(getTextureManager(), 300, 100, TextureOptions.BILINEAR);
+		PillarBrick.BRICK_TTR = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(btaPB, this, "pb.png", 0, 0, 1, 1);
 		btaPB.load();
+		BitmapTextureAtlas btaPBB = new BitmapTextureAtlas(getTextureManager(), 300, 100, TextureOptions.BILINEAR);
+		PillarBrick.BRICKBORDER_TTR = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(btaPBB, this, "pbb.png", 0, 0, 1, 1);
+		btaPBB.load();
 
 		BitmapTextureAtlas btaBG = new BitmapTextureAtlas(getTextureManager(), 480, 800, TextureOptions.BILINEAR);
 		GameController.BACKBROUND = BitmapTextureAtlasTextureRegionFactory.createFromAsset(btaBG, this, "background.png", 0, 0);
 		btaBG.load();
+		
+		BitmapTextureAtlas fish =  new BitmapTextureAtlas(getTextureManager(), 300, 1700, TextureOptions.BILINEAR);
+		FISH_REGION = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(fish, this, "fish_g.png", 0, 0, 1, 17);
+		fish.load();
+//		F1 = new TiledSprite(0, 0, FISH_REGION, getVertexBufferObjectManager());
 	}
 
 	@Override

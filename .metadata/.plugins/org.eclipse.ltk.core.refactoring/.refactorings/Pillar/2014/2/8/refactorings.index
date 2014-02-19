@@ -16,3 +16,5 @@
 1392564559495	Delete element
 1392578866084	Rename field 'unHandled'
 1392631890191	Rename method 'isTouchable'
+1392826810847	Rename field 'TILEDTEXTURE'
+1392826887340	Rename field 'BRICKBORDER_TTRegion'
