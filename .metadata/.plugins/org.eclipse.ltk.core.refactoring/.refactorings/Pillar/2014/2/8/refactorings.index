@@ -18,3 +18,5 @@
 1392631890191	Rename method 'isTouchable'
 1392826810847	Rename field 'TILEDTEXTURE'
 1392826887340	Rename field 'BRICKBORDER_TTRegion'
+1392830787159	Rename method 'onMovingStared'
+1392831787719	Rename field '_defaultY'

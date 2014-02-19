@@ -12,5 +12,6 @@ public class NoiseBrick extends Brick {
 			VertexBufferObjectManager vertexBufferObjectManager,
 			IBrickOwner brickOwner) {
 		super(x, y, TILEDTEXTURE, vertexBufferObjectManager, brickOwner);
+		setWidth(MathUtils.random(100f, 350f));
 	}
 }
