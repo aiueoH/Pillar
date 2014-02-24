@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">&#x0A;<refactoring comment="Delete resource &apos;AndEngineTest&apos;" deleteContents="true" description="Delete resource &apos;AndEngineTest&apos;" element1="/AndEngineTest" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1390739146132"/>&#x0A;<refactoring comment="Delete resource &apos;AndEnginePhysicsBox2DExtension&apos;" deleteContents="true" description="Delete resource &apos;AndEnginePhysicsBox2DExtension&apos;" element1="/AndEnginePhysicsBox2DExtension" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1390760656987"/>
-</session>

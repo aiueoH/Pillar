@@ -30,4 +30,4 @@ proguard/
 
 #AndEngine lib
 AndEngine/
-AndEngineTexturePackerExtension/
+.metadata/

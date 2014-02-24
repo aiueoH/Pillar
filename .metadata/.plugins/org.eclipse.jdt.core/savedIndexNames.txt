@@ -1,7 +1,0 @@
-INDEX VERSION 1.126+D:\Dropbox\Projects\Pillar\.metadata\.plugins\org.eclipse.jdt.core
-189486204.index
-4054669516.index
-325415295.index
-449463666.index
-1830124947.index
-1179905511.index
