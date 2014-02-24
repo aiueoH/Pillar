@@ -1,8 +1,0 @@
-package com.pillar;
-
-public interface IBrickOwner {
-	public void onBrickTouchedUp(Brick brick);
-	public void onBrickMovingOut(Brick brick);
-	public void onBrickMovedOut(Brick brick);
-	public void onBrickMovedDown(Brick brick);
-}

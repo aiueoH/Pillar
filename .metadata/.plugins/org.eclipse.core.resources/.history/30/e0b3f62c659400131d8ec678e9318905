@@ -1,7 +1,0 @@
-package com.pillar;
-
-public interface IBrickOwner {
-	public void dispatch
-	public void onBrickBreaking(Brick brick);
-	public void onBrickMoveDownFinished(Brick brick);
-}

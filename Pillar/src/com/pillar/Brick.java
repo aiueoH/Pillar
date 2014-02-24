@@ -4,17 +4,11 @@ import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
 import org.andengine.entity.modifier.MoveXModifier;
 import org.andengine.entity.modifier.MoveYModifier;
-import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
-import org.andengine.util.adt.color.Color;
 import org.andengine.util.modifier.IModifier;
-
-import android.R.bool;
-import android.R.integer;
-import android.util.Log;
 
 public abstract class Brick extends AnimatedSprite {
 	

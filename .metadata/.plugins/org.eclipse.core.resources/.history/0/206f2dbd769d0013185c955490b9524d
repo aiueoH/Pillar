@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="PB">pb.png</string>
+    <string name="NB">nb.png</string>
+    <string name="PB_FISH">fish_g.png</string>
+
+</resources>

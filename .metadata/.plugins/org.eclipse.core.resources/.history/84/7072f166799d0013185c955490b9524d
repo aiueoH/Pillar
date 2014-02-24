@@ -1,0 +1,59 @@
+package com.pillar;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.andengine.opengl.texture.TextureManager;
+import org.andengine.opengl.texture.TextureOptions;
+import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
+import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
+import org.andengine.opengl.texture.region.TiledTextureRegion;
+import org.andengine.ui.activity.BaseGameActivity;
+
+public class MyTexturePacker {
+	
+	public enum TKey {
+		PB,
+		PB_BORDER,
+		NB,
+		FISH,
+	};
+	
+	private static MyTexturePacker _instance;
+	private Map<TKey, TiledTextureRegion> _textures;
+	
+	private MyTexturePacker() {
+		_textures = new HashMap<TKey, TiledTextureRegion>();
+	}
+	
+	public static MyTexturePacker getInstance() {
+		if (_instance == null)
+			synchronized (MyTexturePacker.class) {
+				if (_instance == null)
+					_instance = new MyTexturePacker();
+			}
+		return _instance;
+	}
+	
+	public void load(final BaseGameActivity baseGameActivity) {
+		final TextureManager textureManager = baseGameActivity.getTextureManager();
+
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
+		BitmapTextureAtlas bta;
+		bta = new BitmapTextureAtlas(textureManager, 300, 100, TextureOptions.BILINEAR);
+
+		_textures.put(TKey.PB, BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(bta, baseGameActivity, "pb.png", 0, 0, 1, 1));
+		bta.load();
+		_textures.put(TKey.PB_BORDER, BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(bta, baseGameActivity, "pb.png", 0, 0, 1, 1));
+		bta.load();
+		bta = new BitmapTextureAtlas(textureManager, 300, 100, TextureOptions.BILINEAR);
+		_textures.put(TKey.NB, BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(bta, baseGameActivity, "nb.png", 0, 0, 1, 1));
+		bta.load();
+	}
+	
+	public TiledTextureRegion getTTR(TKey key) {
+		return _textures.get(key);
+	}
+
+}

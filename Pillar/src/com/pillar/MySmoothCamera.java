@@ -2,13 +2,7 @@ package com.pillar;
 
 import org.andengine.engine.camera.SmoothCamera;
 import org.andengine.engine.handler.IUpdateHandler;
-import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
-import org.andengine.entity.modifier.MoveYModifier;
-import org.andengine.util.math.MathUtils;
-import org.andengine.util.modifier.IModifier;
-
-import android.util.Log;
 
 public class MySmoothCamera extends SmoothCamera {
 

@@ -1,0 +1,13 @@
+1393175205383	Rename type 'TextureManager'
+1393175994812	Rename type 'MyTextureManager'
+1393260678161	Delete element
+1393260685682	Copy file
+1393261761628	Delete element
+1393261905684	Delete element
+1393262712152	Rename type 'Texture'
+1393262733260	Rename type 'Key'
+1393262892035	Rename type 'TextureEnum'
+1393264055171	Rename type 'MyTexturePacker'
+1393264188488	Rename enum constant 'FISH'
+1393264210045	Rename enum constant 'C_FISH'
+1393264549958	Rename local variable 'boderWidth'

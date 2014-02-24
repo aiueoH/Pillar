@@ -1,51 +1,27 @@
 package com.pillar;
 
-import java.lang.annotation.Retention;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import javax.security.auth.PrivateCredentialPermission;
-
 import org.andengine.engine.Engine;
-import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.SmoothCamera;
 import org.andengine.engine.camera.hud.HUD;
-import org.andengine.engine.handler.IUpdateHandler;
-import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
-import org.andengine.entity.Entity;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
 import org.andengine.entity.primitive.Gradient;
-import org.andengine.entity.primitive.Line;
-import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.background.EntityBackground;
-import org.andengine.entity.scene.background.IBackground;
-import org.andengine.entity.scene.background.SpriteBackground;
-import org.andengine.entity.sprite.AnimatedSprite;
-import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
-import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.font.FontManager;
 import org.andengine.opengl.texture.TextureManager;
 import org.andengine.opengl.texture.region.ITextureRegion;
-import org.andengine.opengl.texture.region.TextureRegion;
-import org.andengine.opengl.texture.region.TiledTextureRegion;
-import org.andengine.opengl.util.GLState;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.adt.color.Color;
 import org.andengine.util.math.MathUtils;
 import org.andengine.util.modifier.IModifier;
 
-import android.R.bool;
-import android.R.integer;
-import android.R.string;
 import android.graphics.Typeface;
 import android.util.Log;
 
@@ -138,46 +114,46 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 		}
 		// test button
 		{
-			Rectangle r; 
-			r = new Rectangle(50f, CAM_HEIGHT - 50f, 50f, 50f, _vertexBufferObjectManager) {
-				@Override
-				public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float X, float Y) 
-			    {
-					if (pSceneTouchEvent.isActionDown()) {
-						chaseBrickAtBottom(_bricks.get(0));
-					} else if (pSceneTouchEvent.isActionUp()) {
-						chaseBrickAtBottom(_bricks.get(_bottomBrickIndex));
-					}
-			        return true;
-			    };
-			};
-			r.setColor(Color.RED);
-			_hud.registerTouchArea(r);
-			_hud.attachChild(r); 
-			r = new Rectangle(50f, CAM_HEIGHT - 120f, 50f, 50f, _vertexBufferObjectManager) {
-				@Override
-				public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float X, float Y) 
-			    {
-					if (pSceneTouchEvent.isActionMove())
-						_camera.setCenter(_camera.getCenterX(), _camera.getCenterY() + 30);
-			        return true;
-			    };
-			};
-			r.setColor(Color.GREEN);
-			_hud.registerTouchArea(r);
-			_hud.attachChild(r); 
-			r = new Rectangle(50f, CAM_HEIGHT - 190f, 50f, 50f, _vertexBufferObjectManager) {
-				@Override
-				public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float X, float Y) 
-			    {
-					if (pSceneTouchEvent.isActionMove())
-						_camera.setCenter(_camera.getCenterX(), _camera.getCenterY() - 30);
-			        return true;
-			    };
-			};
-			r.setColor(Color.GREEN);
-			_hud.registerTouchArea(r);
-			_hud.attachChild(r);
+//			Rectangle r; 
+//			r = new Rectangle(50f, CAM_HEIGHT - 50f, 50f, 50f, _vertexBufferObjectManager) {
+//				@Override
+//				public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float X, float Y) 
+//			    {
+//					if (pSceneTouchEvent.isActionDown()) {
+//						chaseBrickAtBottom(_bricks.get(0));
+//					} else if (pSceneTouchEvent.isActionUp()) {
+//						chaseBrickAtBottom(_bricks.get(_bottomBrickIndex));
+//					}
+//			        return true;
+//			    };
+//			};
+//			r.setColor(Color.RED);
+//			_hud.registerTouchArea(r);
+//			_hud.attachChild(r); 
+//			r = new Rectangle(50f, CAM_HEIGHT - 120f, 50f, 50f, _vertexBufferObjectManager) {
+//				@Override
+//				public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float X, float Y) 
+//			    {
+//					if (pSceneTouchEvent.isActionMove())
+//						_camera.setCenter(_camera.getCenterX(), _camera.getCenterY() + 30);
+//			        return true;
+//			    };
+//			};
+//			r.setColor(Color.GREEN);
+//			_hud.registerTouchArea(r);
+//			_hud.attachChild(r); 
+//			r = new Rectangle(50f, CAM_HEIGHT - 190f, 50f, 50f, _vertexBufferObjectManager) {
+//				@Override
+//				public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float X, float Y) 
+//			    {
+//					if (pSceneTouchEvent.isActionMove())
+//						_camera.setCenter(_camera.getCenterX(), _camera.getCenterY() - 30);
+//			        return true;
+//			    };
+//			};
+//			r.setColor(Color.GREEN);
+//			_hud.registerTouchArea(r);
+//			_hud.attachChild(r);
 		}
 		_camera.setHUD(_hud);
 	}
@@ -188,7 +164,7 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 			float pY = SCENE_HEIGHT - (i + 1) * Brick.DEFAULT_HEIGHT + Brick.DEFAULT_HEIGHT / 2;
 			pY = (i + 0.5f) * Brick.DEFAULT_HEIGHT;
 			Brick brick;
-			if (MathUtils.random(0, 1) == 0) {
+			if (MathUtils.random(0, 2) == 0) {
 				brick = new PillarBrick(pX, pY, _vertexBufferObjectManager, this, PB_NUMS - pCount - 1);
 				pCount++;
 			} else
@@ -280,7 +256,7 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 				// 完成動畫(慢速移動鏡頭巡覽整柱)
 				if (_isComplete) {
 					final float bottomY = _bricks.get(0).getDestinationY() + (_camera.getHeight() - brick.getHeight()) / 2;
-					_camera.setCenter(_camera.getCenterX(), bottomY, _camera.getMaxVelocityY() / 10, new IEntityModifierListener() {
+					_camera.setCenter(_camera.getCenterX(), bottomY, _camera.getMaxVelocityY(), new IEntityModifierListener() {
 						@Override
 						public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {}
 						@Override

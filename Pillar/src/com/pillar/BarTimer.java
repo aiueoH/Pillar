@@ -1,24 +1,19 @@
 package com.pillar;
 
-import java.util.ArrayList;
-
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
-import org.andengine.entity.Entity;
 import org.andengine.entity.primitive.Line;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.adt.color.Color;
 
-import android.R.integer;
-import android.util.Log;
-
 public class BarTimer extends Rectangle {
 
 	
-	private float _x, _y, _width, _height;
+	private float _x, _y, _width, _height, _borderWidth;
 	private float _duration, _time;
 	private float _interval;
+	private Color _barColor, _borderColor;
 	
 	private boolean _isPause;
 	
@@ -27,13 +22,13 @@ public class BarTimer extends Rectangle {
 	private TimerHandler _timerHandler;
 	private IBarTimerOwner _barTimerOwner;
 	
-	public BarTimer(float x, float y, float width, float height, 
-			float boderWidth, 
-			Color barColor, Color borderColor, 
-			float duration,
-			float interval,
-			VertexBufferObjectManager vertexBufferObjectManager, 
-			IBarTimerOwner barTimerOwner) {
+	public BarTimer(final float x, final float y, final float width, final float height, 
+			final float borderWidth, 
+			final Color barColor, final Color borderColor, 
+			final float duration,
+			final float interval,
+			final VertexBufferObjectManager vertexBufferObjectManager, 
+			final IBarTimerOwner barTimerOwner) {
 		super(x, y, width, height, vertexBufferObjectManager);
 		_isPause = false;
 		this.setColor(Color.TRANSPARENT);
@@ -41,37 +36,39 @@ public class BarTimer extends Rectangle {
 		_y = y;
 		_width = width;
 		_height = height;
+		_borderWidth = borderWidth;
+		_barColor = barColor;
+		_borderColor = borderColor;
 		_time = _duration = duration;
 		_interval = interval;
 		_barTimerOwner = barTimerOwner;
-		_bar = new Rectangle(x, y, width, height, vertexBufferObjectManager);
-		_bar.setColor(barColor);
+		_bar = new Rectangle(_x, _y, _width, _height, vertexBufferObjectManager);
+		_bar.setColor(_barColor);
 		attachChild(_bar);
 		{
-			float cX[] = {x - width / 2, x + width / 2};
-			float cY[] = {y + height / 2, y - height / 2};
-			_borderLines[0] = new Line(cX[0], cY[0], cX[1], cY[0], boderWidth, vertexBufferObjectManager);
-			_borderLines[1] = new Line(cX[1], cY[0], cX[1], cY[1], boderWidth, vertexBufferObjectManager);
-			_borderLines[2] = new Line(cX[1], cY[1], cX[0], cY[1], boderWidth, vertexBufferObjectManager);
-			_borderLines[3] = new Line(cX[0], cY[1], cX[0], cY[0], boderWidth, vertexBufferObjectManager);
+			float cX[] = {_x - _width / 2, _x + _width / 2};
+			float cY[] = {_y + _height / 2, _y - _height / 2};
+			_borderLines[0] = new Line(cX[0], cY[0], cX[1], cY[0], _borderWidth, vertexBufferObjectManager);
+			_borderLines[1] = new Line(cX[1], cY[0], cX[1], cY[1], _borderWidth, vertexBufferObjectManager);
+			_borderLines[2] = new Line(cX[1], cY[1], cX[0], cY[1], _borderWidth, vertexBufferObjectManager);
+			_borderLines[3] = new Line(cX[0], cY[1], cX[0], cY[0], _borderWidth, vertexBufferObjectManager);
 		}
 		for (Line line : _borderLines) {
-			line.setColor(borderColor);
+			line.setColor(_borderColor);
 			attachChild(line);
 		}
-		final BarTimer thisBarTimer = this;
-		_timerHandler = new TimerHandler(interval, true, new ITimerCallback() {
+		_timerHandler = new TimerHandler(_interval, true, new ITimerCallback() {
 			@Override
 			public void onTimePassed(TimerHandler timerHandler) {
 				if (!_isPause) {
-					if (thisBarTimer._time > 0) {
-						thisBarTimer._time -= thisBarTimer._interval;
-						float p = thisBarTimer._time / thisBarTimer._duration;
-						thisBarTimer._bar.setHeight(thisBarTimer._height * p);
-						thisBarTimer._bar.setY(thisBarTimer._y - thisBarTimer._height / 2 + thisBarTimer._bar.getHeight() / 2);
+					if (_time > 0) {
+						_time -= _interval;
+						float p = _time / _duration;
+						_bar.setHeight(_height * p);
+						_bar.setY(_y - _height / 2 + _bar.getHeight() / 2);
 					} else {
 						timerHandler.setAutoReset(false);
-						thisBarTimer._barTimerOwner.onTimesUp(timerHandler);
+						_barTimerOwner.onTimesUp(timerHandler);
 					}
 				}
 			}
@@ -82,7 +79,7 @@ public class BarTimer extends Rectangle {
 		_isPause = true;
 	}
 	
-	public void setPercent(float n) {
+	public void setPercent(final float n) {
 		_bar.setY(_x + (1f - n) * _height);
 		_bar.setHeight(n * _height);
 	}
