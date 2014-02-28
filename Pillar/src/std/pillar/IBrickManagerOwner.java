@@ -1,4 +1,4 @@
-package com.pillar;
+package std.pillar;
 
 public interface IBrickManagerOwner {
 	public void onBrickLinked(BrickManager brickManager);

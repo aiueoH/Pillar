@@ -1,4 +1,4 @@
-package com.pillar;
+package std.pillar;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +14,8 @@ public class TPacker {
 		PB,
 		PB_BORDER,
 		NB,
+		TITLE,
+		START,
 		C_G_FISH,
 	};
 	
@@ -42,6 +44,10 @@ public class TPacker {
 		load(TKey.PB, "pb.png", 300, 100, 0, 0, 1, 1);
 		load(TKey.PB_BORDER, "pbb.png", 300, 100, 0, 0, 1, 1);
 		load(TKey.NB, "nb.png", 300, 100, 0, 0, 1, 1);
+
+		load(TKey.TITLE, "title.png", 400, 100, 0, 0, 1, 1);
+		load(TKey.START, "start.png", 200, 50, 0, 0, 1, 1);
+		
 		load(TKey.C_G_FISH, "fish_g.png", 300, 1700, 0, 0, 1, 17);
 	}
 	

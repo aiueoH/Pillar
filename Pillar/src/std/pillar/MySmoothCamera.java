@@ -1,4 +1,4 @@
-package com.pillar;
+package std.pillar;
 
 import org.andengine.engine.camera.SmoothCamera;
 import org.andengine.engine.handler.IUpdateHandler;
@@ -57,22 +57,34 @@ public class MySmoothCamera extends SmoothCamera {
 		_moveListener = listener;
 		setMaxVelocityY(_defaultMaxVelocityY);
 		setCenterImp(x, y);
-		onMovingStarted();
 	}
 	
 	public void setCenter(final float x, final float y, final float maxVelocityY, IEntityModifierListener listener) {
 		_moveListener = listener;
 		setMaxVelocityY(maxVelocityY);
 		setCenterImp(x, y);
-		onMovingStarted();
 	}
 	
 	private void setCenterImp(final float x, final float y) {
 		if (!equal(x, _dstX, COOR_EQ_ERR) || !equal(y, _dstY, COOR_EQ_ERR))
 			_isMoving = true;
+		MyLog.d(" x:" + x + " _dstX:" + _dstX + " y:" + y + " _dstY:" + _dstY);
+		MyLog.d("_isMoving:" + _isMoving);
 		_dstX = x;
 		_dstY = y;
+		onMovingStarted();
 		super.setCenter(x, y);
+	}
+	
+	@Override
+	public void setCenterDirect(final float x, final float y) {
+		_moveListener = null;
+		if (!equal(x, _dstX, COOR_EQ_ERR) || !equal(y, _dstY, COOR_EQ_ERR))
+			_isMoving = true;
+		_dstX = x;
+		_dstY = y;
+		onMovingStarted();
+		super.setCenterDirect(x, y);
 	}
 	
 	private boolean equal(float a, float b, float err) {
@@ -88,5 +100,6 @@ public class MySmoothCamera extends SmoothCamera {
 		setMaxVelocityY(_defaultMaxVelocityY);
 		if (_moveListener != null)
 			_moveListener.onModifierFinished(null, null);
+		_moveListener = null;
 	}
 }

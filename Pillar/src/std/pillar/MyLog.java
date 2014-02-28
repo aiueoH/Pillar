@@ -1,4 +1,4 @@
-package com.pillar;
+package std.pillar;
 
 import org.andengine.util.debug.Debug;
 
@@ -9,6 +9,10 @@ public class MyLog {
 	
 	public static void d(String s) {
 		Debug.d(_tag, s);
+	}
+	
+	public static void d(Exception e) {
+		d(e.getMessage());
 	}
 
 }

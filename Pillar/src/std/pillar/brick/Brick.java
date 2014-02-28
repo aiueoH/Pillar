@@ -1,4 +1,4 @@
-package com.pillar;
+package std.pillar.brick;
 
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
@@ -9,6 +9,9 @@ import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.modifier.IModifier;
+
+import std.pillar.stage.PillarStage;
+
 
 public abstract class Brick extends AnimatedSprite {
 	
@@ -30,7 +33,7 @@ public abstract class Brick extends AnimatedSprite {
 		_isMovingOut = false;
 		_brickOwner = brickOwner;
 		_destinationY = y;
-		this.setCullingEnabled(true);
+		setCullingEnabled(true);
 	}
 	
 	@Override

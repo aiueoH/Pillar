@@ -1,4 +1,4 @@
-package com.pillar;
+package std.pillar;
 
 import org.andengine.engine.handler.timer.TimerHandler;
 

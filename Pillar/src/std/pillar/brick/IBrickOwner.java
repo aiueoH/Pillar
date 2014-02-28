@@ -1,4 +1,5 @@
-package com.pillar;
+package std.pillar.brick;
+
 
 public interface IBrickOwner {
 	public boolean isBrickTouchable(final Brick brick);

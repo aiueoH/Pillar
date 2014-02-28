@@ -1,7 +1,10 @@
-package com.pillar;
+package std.pillar.brick;
 
 import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
+
+import std.pillar.TPacker;
+import std.pillar.TPacker.TKey;
 
 public class PillarBrick extends Brick {
 	

@@ -4,21 +4,22 @@
 // 發生 pillar 完成事件
 ///////////////////////////////////////////////////////////////////////////////
 
-package com.pillar;
+package std.pillar;
 
 import java.util.ArrayList;
 
 import org.andengine.engine.Engine;
 import org.andengine.entity.scene.Scene;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
-import org.andengine.util.adt.io.in.IInputStreamOpener;
 import org.andengine.util.math.MathUtils;
 
-import android.R.integer;
+import std.pillar.brick.Brick;
+import std.pillar.brick.IBrickOwner;
+import std.pillar.brick.NoiseBrick;
+import std.pillar.brick.PillarBrick;
 
 public class BrickManager implements IBrickOwner {
 
-	private Engine _engine;
 	private Scene _scene;
 	private VertexBufferObjectManager _vertexBufferObjectManager;
 	private IBrickManagerOwner _brickManagerOwner;
@@ -28,8 +29,7 @@ public class BrickManager implements IBrickOwner {
 	private int _touchedCount;
 	private int _focus;
 	
-	public BrickManager(final Engine engine, final Scene scene, final VertexBufferObjectManager vertexBufferObjectManager, final IBrickManagerOwner brickManagerOwner) {
-		_engine = engine;
+	public BrickManager(final Scene scene, final VertexBufferObjectManager vertexBufferObjectManager, final IBrickManagerOwner brickManagerOwner) {
 		_scene = scene;
 		_vertexBufferObjectManager = vertexBufferObjectManager;
 		_brickManagerOwner = brickManagerOwner;
@@ -47,7 +47,6 @@ public class BrickManager implements IBrickOwner {
 		_brickManagerOwner = null;
 		_vertexBufferObjectManager = null;
 		_scene = null;
-		_engine = null;
 	}
 	
 	public int getFocusIndex() {
@@ -76,7 +75,7 @@ public class BrickManager implements IBrickOwner {
 		float x = 480f / 2f, y;
 		Brick brick;
 		for (int i = 0, count = 0; count < _pillarNum; i++) {
-			if (MathUtils.random(0, 2) == 0) {
+			if (MathUtils.random(0, 5) != 0) {
 				brick = new PillarBrick(x, 0, _vertexBufferObjectManager, this, _pillarNum - count - 1);
 				count++;
 			} else
@@ -96,7 +95,7 @@ public class BrickManager implements IBrickOwner {
 	}
 	
 	private void deleteBrick(final Brick brick) {
-		_engine.runOnUpdateThread(new Runnable() {
+		GameActivity.ENGINE.runOnUpdateThread(new Runnable() {
 			@Override
 			public void run() {
 				_scene.unregisterTouchArea(brick);
@@ -135,6 +134,7 @@ public class BrickManager implements IBrickOwner {
 		if (_touchedCount > 0) {
 			_touchedCount--;
 			if (_touchedCount == 0) {
+				// 檢查 brick 鏈結
 				{
 					int count = 0;
 					for (int i = _focus; i < _focus + 5 && i < _bricks.size(); i++)
@@ -143,6 +143,7 @@ public class BrickManager implements IBrickOwner {
 					if (count >= 5)
 						_brickManagerOwner.onBrickLinked(this);
 				}
+				// 檢查完成柱子
 				{
 					boolean isComplete = true;
 					for (int i = _focus; i < _bricks.size(); i++)
