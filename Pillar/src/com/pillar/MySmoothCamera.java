@@ -30,7 +30,6 @@ public class MySmoothCamera extends SmoothCamera {
 						_isMoving = false;
 						onMovingFinished();
 					}
-//				Log.d("Wei", "isMoving = " + _isMoving + " dX=" + _dstX + " dY=" + _dstY + " x=" + getCenterX() + " y=" + getCenterY());
 			}
 			@Override
 			public void reset() {}

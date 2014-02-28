@@ -52,10 +52,10 @@ public class BarTimer extends Rectangle {
 			_borderLines[1] = new Line(cX[1], cY[0], cX[1], cY[1], _borderWidth, vertexBufferObjectManager);
 			_borderLines[2] = new Line(cX[1], cY[1], cX[0], cY[1], _borderWidth, vertexBufferObjectManager);
 			_borderLines[3] = new Line(cX[0], cY[1], cX[0], cY[0], _borderWidth, vertexBufferObjectManager);
-		}
-		for (Line line : _borderLines) {
-			line.setColor(_borderColor);
-			attachChild(line);
+			for (Line line : _borderLines) {
+				line.setColor(_borderColor);
+				attachChild(line);
+			}
 		}
 		_timerHandler = new TimerHandler(_interval, true, new ITimerCallback() {
 			@Override

@@ -9,9 +9,11 @@ import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
 import org.andengine.entity.primitive.Gradient;
+import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.EntityBackground;
 import org.andengine.entity.text.Text;
+import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.font.FontManager;
@@ -25,7 +27,7 @@ import org.andengine.util.modifier.IModifier;
 import android.graphics.Typeface;
 import android.util.Log;
 
-public class GameController implements IBrickOwner, IBarTimerOwner {
+public class PillarStage implements  IBarTimerOwner, IBrickManagerOwner {
 
 	public static final float SCENE_WIDTH = 480, SCENE_HEIGHT = 3000;
 	// Camera
@@ -53,6 +55,8 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 	private MySmoothCamera _camera;
 	private HUD _hud;
 	
+	private BrickManager _brickManager;
+	
 	private ArrayList<Brick> _bricks;
 	private int _bottomBrickIndex;
 	// HUD
@@ -62,11 +66,17 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 	private boolean _isComplete;
 	private int _unHandled = 0;
 	
-	public GameController() {
+	private Scene _Scene2;
+	
+	private float _begineCamY;
+	private float _endCamY;
+	
+	public PillarStage() {
 		_isComplete = false;
 		
 		_bricks = new ArrayList<Brick>();
 		_camera = new MySmoothCamera(0, 0, CAM_WIDTH, CAM_HEIGHT, CAM_VEL_X, CAM_VEL_Y, CAM_VEL_Z);
+		_begineCamY = _camera.getCenterY();
 	}
 	
 	public void initScene() {
@@ -74,46 +84,44 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 		_hud = new HUD();
 		// background
 		{
-			float w = GameController.CAM_WIDTH, h = GameController.CAM_HEIGHT;
+			float w = CAM_WIDTH, h = CAM_HEIGHT;
 			float x = w / 2, y = h / 2;
 			Gradient gradient = new Gradient(x, y, w, h, _vertexBufferObjectManager);
 			gradient.setGradient(new Color(0.34f, 0.76f, 0.82f), Color.WHITE, 0f, 1f);
 			_scene.setBackground(new EntityBackground(gradient));
 		}
-		initBrick();
-		String s = "";
-		for (Brick b : _bricks) {
-			if (b instanceof PillarBrick)
-				s += "p";
-			else
-				s += "N";
-		}
-		Log.d("Wei", s);
-		{
-//			int b = findBottomBrickIndex();
-//			setBricksIsTouchable(_bottomBrickIndex, b - _bottomBrickIndex, false);
-//			_bottomBrickIndex = b;
-		}
-		chaseBrickAtBottom(_bricks.get(_bottomBrickIndex));
+//		initBrick();
+		_brickManager = new BrickManager(_engine, _scene, _vertexBufferObjectManager, this);
+		_brickManager.init();
+//		String s = "";
+//		for (Brick b : _bricks) {
+//			if (b instanceof PillarBrick)
+//				s += "p";
+//			else
+//				s += "N";
+//		}
+//		Log.d("Wei", s);
+
+//		chaseBrickAtBottom(_bricks.get(_bottomBrickIndex));
 		
-		// text
-		{
-			Font font = FontFactory.create(_fontManager, _textureManager, 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
-			font.load();
-			_completeText = new Text(0, 0, font, "01234567890123456789", _vertexBufferObjectManager);
-			_completeText.setText(new DecimalFormat("#.##").format(calcCompleteRate()) + "%");
-			float x = _completeText.getWidth() / 2, y = _camera.getHeight() - _completeText.getHeight() / 2;
-			_completeText.setPosition(x, y);
-			_hud.attachChild(_completeText);
-		}
-		// bartimer
-		{
-			_barTimer = new BarTimer(BT_X, BT_Y, BT_W, BT_H, BT_BORDER_W, BT_BAR_C, BT_BORDER_C, TIMER_DURATION, TIMER_INTERVAL, _vertexBufferObjectManager, this);
-			_hud.attachChild(_barTimer);
-			_scene.registerUpdateHandler(_barTimer.getTimerHandler());
-		}
-		// test button
-		{
+//		// text
+//		{
+//			Font font = FontFactory.create(_fontManager, _textureManager, 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+//			font.load();
+//			_completeText = new Text(0, 0, font, "01234567890123456789", _vertexBufferObjectManager);
+//			_completeText.setText(new DecimalFormat("#.##").format(calcCompleteRate()) + "%");
+//			float x = _completeText.getWidth() / 2, y = _camera.getHeight() - _completeText.getHeight() / 2;
+//			_completeText.setPosition(x, y);
+//			_hud.attachChild(_completeText);
+//		}
+//		// bartimer
+//		{
+//			_barTimer = new BarTimer(BT_X, BT_Y, BT_W, BT_H, BT_BORDER_W, BT_BAR_C, BT_BORDER_C, TIMER_DURATION, TIMER_INTERVAL, _vertexBufferObjectManager, this);
+//			_hud.attachChild(_barTimer);
+//			_scene.registerUpdateHandler(_barTimer.getTimerHandler());
+//		}
+//		// test button
+//		{
 //			Rectangle r; 
 //			r = new Rectangle(50f, CAM_HEIGHT - 50f, 50f, 50f, _vertexBufferObjectManager) {
 //				@Override
@@ -136,6 +144,8 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 //			    {
 //					if (pSceneTouchEvent.isActionMove())
 //						_camera.setCenter(_camera.getCenterX(), _camera.getCenterY() + 30);
+//					if (pSceneTouchEvent.isActionUp())
+//						_engine.setScene(_scene);
 //			        return true;
 //			    };
 //			};
@@ -148,37 +158,39 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 //			    {
 //					if (pSceneTouchEvent.isActionMove())
 //						_camera.setCenter(_camera.getCenterX(), _camera.getCenterY() - 30);
+//					if (pSceneTouchEvent.isActionUp())
+//						_engine.setScene(_Scene2);
 //			        return true;
 //			    };
 //			};
 //			r.setColor(Color.GREEN);
 //			_hud.registerTouchArea(r);
 //			_hud.attachChild(r);
-		}
+//		}
 		_camera.setHUD(_hud);
 	}
 	
-	public void initBrick() {
-		for (int i = 0, pCount = 0; pCount < PB_NUMS; i++) {
-			float pX = CAM_WIDTH / 2;
-			float pY = SCENE_HEIGHT - (i + 1) * Brick.DEFAULT_HEIGHT + Brick.DEFAULT_HEIGHT / 2;
-			pY = (i + 0.5f) * Brick.DEFAULT_HEIGHT;
-			Brick brick;
-			if (MathUtils.random(0, 2) == 0) {
-				brick = new PillarBrick(pX, pY, _vertexBufferObjectManager, this, PB_NUMS - pCount - 1);
-				pCount++;
-			} else
-				brick = new NoiseBrick(pX, pY, _vertexBufferObjectManager, this);
-			addBrick(brick);
-		}
-		_bottomBrickIndex = 0;
-	}
+//	public void initBrick() {
+//		for (int i = 0, pCount = 0; pCount < PB_NUMS; i++) {
+//			float pX = CAM_WIDTH / 2;
+//			float pY = SCENE_HEIGHT - (i + 1) * Brick.DEFAULT_HEIGHT + Brick.DEFAULT_HEIGHT / 2;
+//			pY = (i + 0.5f) * Brick.DEFAULT_HEIGHT;
+//			Brick brick;
+//			if (MathUtils.random(0, 2) == 0) {
+//				brick = new PillarBrick(pX, pY, _vertexBufferObjectManager, this, PB_NUMS - pCount - 1);
+//				pCount++;
+//			} else
+//				brick = new NoiseBrick(pX, pY, _vertexBufferObjectManager, this);
+//			addBrick(brick);
+//		}
+//		_bottomBrickIndex = 0;
+//	}
 	
-	private void addBrick(Brick brick) {
-		_scene.attachChild(brick);
-		_scene.registerTouchArea(brick);
-		_bricks.add(brick);
-	}
+//	private void addBrick(Brick brick) {
+//		_scene.attachChild(brick);
+//		_scene.registerTouchArea(brick);
+//		_bricks.add(brick);
+//	}
 	
 	///////////////////////////////////////////////////////////////////////////
 	// get
@@ -228,65 +240,85 @@ public class GameController implements IBrickOwner, IBarTimerOwner {
 	// IBrickOwner
 	///////////////////////////////////////////////////////////////////////////
 
+//	@Override
+//	public boolean isBrickTouchable(Brick brick) {
+//		return brick.getIsTouchable() & !_camera.getIsMoving();
+//	}
+//	
+//	@Override
+//	public void onBrickMovedDown(Brick brick) {
+//		if (_unHandled > 0) {
+//			_unHandled--;
+//			{
+//				if (hasNoiseBrick())
+//					_completeText.setText(new DecimalFormat("#.##").format(calcCompleteRate()) + "%");
+//				else
+//					_completeText.setText("Complete " + new DecimalFormat("#.##").format(calcCompleteRate()) + "% !!");
+//				float x = _completeText.getWidth() / 2, y = _camera.getHeight() - _completeText.getHeight() / 2;
+//				_completeText.setPosition(x, y);
+//			}
+//			if (_unHandled == 0) {
+//				while (isPillarBrick(_bottomBrickIndex, PB_LINKED_NUMS_THR)) {
+//					final int old = _bottomBrickIndex;	
+//					_bottomBrickIndex += PB_LINKED_NUMS_THR;
+//					_bottomBrickIndex = _bottomBrickIndex < _bricks.size() ? _bottomBrickIndex : _bricks.size() - 1;
+//					setBricksIsTouchable(old, _bottomBrickIndex - old, false);
+//				}
+//				chaseBrickAtBottom(_bricks.get(_bottomBrickIndex));
+//				// 完成動畫(慢速移動鏡頭巡覽整柱)
+//				if (_isComplete) {
+//					final float bottomY = _bricks.get(0).getDestinationY() + (_camera.getHeight() - brick.getHeight()) / 2;
+//					_camera.setCenter(_camera.getCenterX(), bottomY, _camera.getMaxVelocityY(), new IEntityModifierListener() {
+//						@Override
+//						public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {}
+//						@Override
+//						public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+//							final float topY = _bricks.get(_bricks.size() - 1).getDestinationY();
+//							_camera.setCenter(_camera.getCenterX(), topY, _camera.getMaxVelocityY() / 10);
+//						}
+//					});
+//				}
+//			}
+//		}
+//	}
+//	
+//	@Override
+//	public void onBrickMovedOut(final Brick brick) {
+//		int i = _bricks.indexOf(brick);
+//		deleteBrick(brick);
+//		moveDownBricks(i);
+//		if (!hasNoiseBrick()) {
+//			_isComplete = true;
+//			_barTimer.pause();
+//			setBricksIsTouchable(_bottomBrickIndex, _bricks.size(), false);
+//		}
+//	}
+//
+//	@Override
+//	public void onBrickTouchedUp(final Brick brick) {
+//		_unHandled++;
+//	}
+
+	///////////////////////////////////////////////////////////////////////////
+	// IBrickManagerOwner
+	///////////////////////////////////////////////////////////////////////////
+
 	@Override
-	public boolean isBrickTouchable(Brick brick) {
-		return brick.getIsTouchable() & !_camera.getIsMoving();
+	public void onBrickLinked(BrickManager brickManager) {
+		// TODO Auto-generated method stub
+		MyLog.d(Thread.currentThread().getStackTrace()[2].toString());
+		_brickManager.focusNext();
+		chaseBrickAtBottom(_brickManager.getFocusBrick());
 	}
 	
 	@Override
-	public void onBrickMovedDown(Brick brick) {
-		if (_unHandled > 0) {
-			_unHandled--;
-			{
-				if (hasNoiseBrick())
-					_completeText.setText(new DecimalFormat("#.##").format(calcCompleteRate()) + "%");
-				else
-					_completeText.setText("Complete " + new DecimalFormat("#.##").format(calcCompleteRate()) + "% !!");
-				float x = _completeText.getWidth() / 2, y = _camera.getHeight() - _completeText.getHeight() / 2;
-				_completeText.setPosition(x, y);
-			}
-			if (_unHandled == 0) {
-				while (isPillarBrick(_bottomBrickIndex, PB_LINKED_NUMS_THR)) {
-					final int old = _bottomBrickIndex;	
-					_bottomBrickIndex += PB_LINKED_NUMS_THR;
-					_bottomBrickIndex = _bottomBrickIndex < _bricks.size() ? _bottomBrickIndex : _bricks.size() - 1;
-					setBricksIsTouchable(old, _bottomBrickIndex - old, false);
-				}
-				chaseBrickAtBottom(_bricks.get(_bottomBrickIndex));
-				// 完成動畫(慢速移動鏡頭巡覽整柱)
-				if (_isComplete) {
-					final float bottomY = _bricks.get(0).getDestinationY() + (_camera.getHeight() - brick.getHeight()) / 2;
-					_camera.setCenter(_camera.getCenterX(), bottomY, _camera.getMaxVelocityY(), new IEntityModifierListener() {
-						@Override
-						public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {}
-						@Override
-						public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
-							final float topY = _bricks.get(_bricks.size() - 1).getDestinationY();
-							_camera.setCenter(_camera.getCenterX(), topY, _camera.getMaxVelocityY() / 10);
-						}
-					});
-				}
-			}
-		}
+	public void onCompleted(BrickManager brickManager) {
+		MyLog.d("completed");
+		_endCamY = _camera.getCenterY();
+		_camera.setCenterDirect(_camera.getCenterX(), _begineCamY);
+		_camera.setCenter(_camera.getCenterX(), _endCamY, _camera.getMaxVelocityY() / 30f);
 	}
 	
-	@Override
-	public void onBrickMovedOut(final Brick brick) {
-		int i = _bricks.indexOf(brick);
-		deleteBrick(brick);
-		moveDownBricks(i);
-		if (!hasNoiseBrick()) {
-			_isComplete = true;
-			_barTimer.pause();
-			setBricksIsTouchable(_bottomBrickIndex, _bricks.size(), false);
-		}
-	}
-
-	@Override
-	public void onBrickTouchedUp(final Brick brick) {
-		_unHandled++;
-	}
-
 	///////////////////////////////////////////////////////////////////////////
 	// others
 	///////////////////////////////////////////////////////////////////////////

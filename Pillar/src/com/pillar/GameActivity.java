@@ -12,11 +12,11 @@ import android.util.DisplayMetrics;
 
 public class GameActivity extends SimpleBaseGameActivity {
 	
-	private GameController _gameController;
+	private PillarStage _PillarStage;
 	
 	public GameActivity() {
 		super();
-		_gameController = new GameController();
+		_PillarStage = new PillarStage();
 	}
 
 	@Override
@@ -26,11 +26,11 @@ public class GameActivity extends SimpleBaseGameActivity {
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		float windowW = dm.widthPixels;
 		float windowH = dm.heightPixels;
-		if (windowW / GameController.CAM_WIDTH > windowH / GameController.CAM_HEIGHT)
-			windowW = GameController.CAM_WIDTH * windowH / GameController.CAM_HEIGHT;
+		if (windowW / PillarStage.CAM_WIDTH > windowH / PillarStage.CAM_HEIGHT)
+			windowW = PillarStage.CAM_WIDTH * windowH / PillarStage.CAM_HEIGHT;
 		else
-			windowH = GameController.CAM_HEIGHT * windowW / GameController.CAM_WIDTH;
-		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_SENSOR, new RatioResolutionPolicy(windowW, windowH), _gameController.getSmoothCamera());
+			windowH = PillarStage.CAM_HEIGHT * windowW / PillarStage.CAM_WIDTH;
+		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_SENSOR, new RatioResolutionPolicy(windowW, windowH), _PillarStage.getSmoothCamera());
 		// 增強梯度效果
 		engineOptions.getRenderOptions().setDithering(true);
 		return engineOptions;
@@ -40,28 +40,17 @@ public class GameActivity extends SimpleBaseGameActivity {
 	@Override
 	protected void onCreateResources() {
 		TPacker.getInstance().load(this);
-		
-//		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-		
-//		BitmapTextureAtlas btaBG = new BitmapTextureAtlas(getTextureManager(), 480, 800, TextureOptions.BILINEAR);
-//		GameController.BACKBROUND = BitmapTextureAtlasTextureRegionFactory.createFromAsset(btaBG, this, "background.png", 0, 0);
-//		btaBG.load();
-		
-//		BitmapTextureAtlas fish =  new BitmapTextureAtlas(getTextureManager(), 300, 1700, TextureOptions.BILINEAR);
-//		FISH_REGION = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(fish, this, "fish_g.png", 0, 0, 1, 17);
-//		fish.load();
-//		F1 = new TiledSprite(0, 0, FISH_REGION, getVertexBufferObjectManager());
 	}
 
 	@Override
 	protected Scene onCreateScene() {
-		_gameController.setEngine(mEngine);
+		_PillarStage.setEngine(mEngine);
 		mEngine.registerUpdateHandler(new FPSLogger());
-		_gameController.setVertexBufferObjectManager(getVertexBufferObjectManager());
-		_gameController.setTextureManager(getTextureManager());
-		_gameController.setFontManager(getFontManager());
-		_gameController.initScene();
-		return _gameController.getScene();
+		_PillarStage.setVertexBufferObjectManager(getVertexBufferObjectManager());
+		_PillarStage.setTextureManager(getTextureManager());
+		_PillarStage.setFontManager(getFontManager());
+		_PillarStage.initScene();
+		return _PillarStage.getScene();
 	}
 
 }
